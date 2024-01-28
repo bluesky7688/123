@@ -1,0 +1,29 @@
+name: Buil code and deploy to Azure
+on: [push]
+job:
+  build:
+  name: build code:
+  runs-on: ubuntu-latest
+  steps:
+  uses: action/checkout@v1
+  - name: Setup .Net Core
+  uses: action/Setup-dotnet@v1
+  with:
+      dotnet-version: 2.2.108
+  run: dotnet build --configuration Release
+
+  deploy: 
+  needs: build
+  name: Deploy app
+  runs-on: ubuntu-latest
+
+  steps:
+  - name: deploy to azure web app
+  uses: azure/appservice-actions/webapp@master
+  with:
+  app-name: mywebappns
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: .       
+
+
+  
